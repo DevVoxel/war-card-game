@@ -76,9 +76,9 @@ function playRound(
 
   if (player1Rank === player2Rank) {
     // War situation, both cards are of equal rank
-    console.log('Player 1 card count:', player1Hand.length);
-    console.log('Player 2 card count:', player2Hand.length);
-    console.log('Tie! Going to war...');
+    // console.log('Player 1 card count:', player1Hand.length);
+    // console.log('Player 2 card count:', player2Hand.length);
+    console.log('%c Tie! Going to War!', 'background: #222; color: #990000');
     const warPile1: Card[] = [];
     const warPile2: Card[] = [];
 
@@ -86,8 +86,8 @@ function playRound(
     for (let i = 0; i < 3; i++) {
       const card1 = player1Hand.shift();
       const card2 = player2Hand.shift();
-      console.log('Player 1 face down:', card1);
-      console.log('Player 2 face down:', card2);
+      // console.log('Player 1 face down:', card1);
+      // console.log('Player 2 face down:', card2);
       if (card1 && card2) {
         warPile1.push(card1);
         warPile2.push(card2);
@@ -109,13 +109,16 @@ function playRound(
 
     if (warRank1 === warRank2) {
       // Another war
-      console.log('War tie! Going to war again...');
+      console.log(
+        '%c War tie! Going to war again!',
+        'background: #222; color: #990000'
+      );
       // Deal three face-down cards
       for (let i = 0; i < 3; i++) {
         const card1 = player1Hand.shift();
         const card2 = player2Hand.shift();
-        console.log('Player 1 face down:', card1);
-        console.log('Player 2 face down:', card2);
+        // console.log('Player 1 face down:', card1);
+        // console.log('Player 2 face down:', card2);
         if (card1 && card2) {
           warPile1.push(card1);
           warPile2.push(card2);
@@ -146,7 +149,12 @@ function playRound(
         ...warPile1,
         ...warPile2
       );
-      console.log('Player 1 wins the war!');
+      console.log(
+        '%c Player 1 wins the round!',
+        'background: #222; color: #6600ff'
+      );
+      // console.log('Player 1 card count:', player1Hand.length);
+      // console.log('Player 2 card count:', player2Hand.length);
       return { player1Hand, player2Hand, roundResult: 'Player 1' };
     } else {
       // Player 2 takes all cards
@@ -158,20 +166,29 @@ function playRound(
         ...warPile1,
         ...warPile2
       );
-      console.log('Player 2 wins the war!');
-      console.log('Player 1 card count:', player1Hand.length);
-      console.log('Player 2 card count:', player2Hand.length);
+      console.log(
+        '%c Player 2 wins the war!',
+        'background: #222; color: #bada55'
+      );
+      // console.log('Player 1 card count:', player1Hand.length);
+      // console.log('Player 2 card count:', player2Hand.length);
       return { player1Hand, player2Hand, roundResult: 'Player 2' };
     }
   } else if (ranks.indexOf(player1Rank) > ranks.indexOf(player2Rank)) {
     // Player 1 wins the round
     player1Hand.push(player1Card, player2Card);
-    console.log('Player 1 wins the round!');
+    console.log(
+      '%c Player 1 wins the round!',
+      'background: #222; color: #6600ff'
+    );
     return { player1Hand, player2Hand, roundResult: 'Player 1' };
   } else {
     // Player 2 wins the round
     player2Hand.push(player1Card, player2Card);
-    console.log('Player 2 wins the round!');
+    console.log(
+      '%c Player 2 wins the round!',
+      'background: #222; color: #bada55'
+    );
     return { player1Hand, player2Hand, roundResult: 'Player 2' };
   }
 }
@@ -181,9 +198,7 @@ function Home() {
   const [player1Hand, setPlayer1Hand] = useState<Card[]>([]);
   const [player2Hand, setPlayer2Hand] = useState<Card[]>([]);
   const [gameStatus, setGameStatus] = useState<string>('');
-  const [gameOver, setGameOver] = useState<boolean>(false); // New state for game over
-  const [drawnCardPlayer1, setDrawnCardPlayer1] = useState<Card | null>(null);
-  const [drawnCardPlayer2, setDrawnCardPlayer2] = useState<Card | null>(null);
+  const [gameOver, setGameOver] = useState<boolean>(false);
 
   useEffect(() => {
     const shuffledDeck = shuffleDeck([...deck]);
@@ -195,7 +210,7 @@ function Home() {
 
   const playGameRound = () => {
     if (gameOver) {
-      return; // Do not allow playing rounds if the game is over
+      return; // Do not allow game continuation once over
     }
 
     const result = playRound([...player1Hand], [...player2Hand]);
@@ -206,9 +221,7 @@ function Home() {
     if (result.roundResult === 'Game Over') {
       setGameOver(true); // Set game over when the game ends
     } else {
-      // Set the drawn cards for each player in the state
-      setDrawnCardPlayer1(result.player1Hand[result.player1Hand.length - 1]);
-      setDrawnCardPlayer2(result.player2Hand[result.player2Hand.length - 1]);
+      // Set the drawn cards for each player in the state (Removed for now)
     }
   };
 
@@ -221,8 +234,6 @@ function Home() {
     setPlayer2Hand(player2Hand);
     setGameStatus('');
     setGameOver(false);
-    setDrawnCardPlayer1(null);
-    setDrawnCardPlayer2(null);
   };
 
   return (
@@ -233,50 +244,46 @@ function Home() {
         {/* Display cards & counts per player */}
         <div className='flex justify-between'>
           <div className='text-center m-8'>
-            <h2>Player 1</h2>
-            <p>Count: {player1Hand.length}</p>
-            {player1Hand.length > 0 && (
-              <div>
-                <p>Card: {player1Hand[player1Hand.length - 1]}</p>
-                {drawnCardPlayer1 && <p>Player draws: {drawnCardPlayer1}</p>}
-              </div>
-            )}
+            <h2 className='text-xl font-semibold mb-2'>Player 1</h2>
+            <p className='text-lg'>Count: {player1Hand.length}</p>
+            <div>
+              <p className='text-lg'>Card: {player1Hand[0]}</p>
+            </div>
           </div>
           <div className='text-center m-8'>
-            <h2>Player 2</h2>
-            <p>Count: {player2Hand.length}</p>
-            {player2Hand.length > 0 && (
-              <div>
-                <p>Card: {player2Hand[player2Hand.length - 1]}</p>
-                {drawnCardPlayer2 && <p>Player draws: {drawnCardPlayer2}</p>}
-              </div>
-            )}
+            <h2 className='text-xl font-semibold mb-2'>Player 2</h2>
+            <p className='text-lg'>Count: {player2Hand.length}</p>
+            <div>
+              <p className='text-lg'>Card: {player2Hand[0]}</p>
+            </div>
           </div>
         </div>
 
         {/* Display the winner of the round */}
         {gameStatus && (
           <div className='mt-4'>
-            <p>Round Result: {gameStatus}</p>
+            <p className='text-lg'>Round Result: {gameStatus}</p>
           </div>
         )}
 
-        {/* Conditionally render the buttons */}
         {!gameOver ? (
           <button
             onClick={playGameRound}
-            className={`mt-8 text-xl font-semibold rounded-lg px-4 py-2 border border-transparent bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+            className='m-4 mt-8 text-xl font-semibold rounded-lg px-4 py-2 border border-transparent bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
           >
             Play Round
           </button>
         ) : (
-          <button
-            onClick={restartGame}
-            className={`mt-8 text-xl font-semibold rounded-lg px-4 py-2 border border-transparent bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
-          >
-            Restart Game
-          </button>
+          <h2 className='m-4 mt-8 text-xl font-semibold rounded-lg px-4 py-2 border border-transparent bg-red-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
+            Press Restart Game Please.
+          </h2>
         )}
+        <button
+          onClick={restartGame}
+          className='m-4 mt-8 text-xl font-semibold rounded-lg px-4 py-2 border border-transparent bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'
+        >
+          Restart Game
+        </button>
       </div>
     </main>
   );
